@@ -1,6 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import compression from 'compression';
+import expressStatusMonitor from 'express-status-monitor';
 import routes from '../api';
 import config from '../config';
 export default ({ app }: { app: express.Application }) => {
@@ -14,6 +16,12 @@ export default ({ app }: { app: express.Application }) => {
   app.head('/status', (req, res) => {
     res.status(200).end();
   });
+
+  // Compress api response [deflate, gzip]
+  app.use(compression());
+
+  // status monitor for node app
+  app.use(expressStatusMonitor());
 
   // Useful if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
   // It shows the real origin IP in the heroku or Cloudwatch logs
